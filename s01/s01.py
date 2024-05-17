@@ -1,0 +1,2 @@
+print("mohammad")
+print("nozaripak")
