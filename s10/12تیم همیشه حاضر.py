@@ -2,6 +2,8 @@ n = int(input())
 a = tuple(map(int,input().split()))
 distance =dict()
 
+# hash map -> dict
+# search order O(1)
 
 for i,ai in enumerate(a):
     if ai in distance:
@@ -12,7 +14,8 @@ for i,ai in enumerate(a):
     else:
         distance[ai]=[i,i+1]
         # distance[ai][0]=i
-print(min(distance.items(),key=lambda x:max(x[1][1],len(a)-x[1][0]))[1][1])
+print(min(map(lambda x:max(x[1][1],len(a)-x[1][0]),distance.items())))
+# print(min(distance.items(),key=lambda x:max(x[1][1],len(a)-x[1][0]))[1][1])
 
 # 1 2 3 1 3 3 3 3
 # n = int(input())
