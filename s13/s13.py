@@ -39,14 +39,7 @@ class Base:
         cls.last_id+=1
         return cls.last_id
     
-    def save(self):
-        if self._is_not_duplicate(self.name):
-            self.id=self._get_id()
-            self.__class__.append_to_objects(self)
-        else:
-            raise self.duplicate_exception
-            # raise DuplicateTagNameException
-            # raise Exception("Error: Tag already exists")
+
 
     @classmethod
     def append_to_objects(cls,obj):
@@ -72,7 +65,32 @@ class Base:
         return True
 
 
-class Tag(Base):
+class SimpleSaveMixin:
+    def save(self):
+        if self._is_not_duplicate(self.name):
+            self.id=self._get_id()
+            self.__class__.append_to_objects(self)
+        else:
+            raise self.duplicate_exception
+            # raise DuplicateTagNameException
+            # raise Exception("Error: Tag already exists")
+
+class ComplexSaveMixin:
+    def save(self):
+        if self._is_not_duplicate(self.name):
+            if Tag.exist(self.tags):
+                self.id=self._get_id()
+                self.__class__.append_to_objects(self)
+            else:
+                raise TagNotFoundException
+        else:
+            raise self.get_duplicate_exception()
+            # raise DuplicateTagNameException
+            # raise Exception("Error: Tag already exists")
+
+
+
+class Tag(SimpleSaveMixin,Base):
     duplicate_exception = DuplicateTagNameException
     
 
@@ -87,17 +105,7 @@ class AddsPlaceCommon(Base,ABC):
         self.cpc=cpc
         self.tags = tags
     
-    def save(self):
-        if self._is_not_duplicate(self.name):
-            if Tag.exist(self.tags):
-                self.id=self._get_id()
-                self.__class__.append_to_objects(self)
-            else:
-                raise TagNotFoundException
-        else:
-            raise self.get_duplicate_exception()
-            # raise DuplicateTagNameException
-            # raise Exception("Error: Tag already exists")
+    
 
     @classmethod
     def get(cls,id):
@@ -123,14 +131,14 @@ class AddsPlaceCommon(Base,ABC):
         
 
 
-class ADS(AddsPlaceCommon):
+class ADS(ComplexSaveMixin,AddsPlaceCommon):
     duplicate_exception = DuplicateAdsNameException
     does_not_exist_exception = AdsDoesNotExist
     suggest_objects = None
     def get_duplicate_exception(self):
         return self.duplicate_exception
 
-class Place(AddsPlaceCommon):
+class Place(ComplexSaveMixin,AddsPlaceCommon):
     duplicate_exception = DuplicatePlaceNameException
     does_not_exist_exception = PlaceDoesNotExist
     suggest_objects = ADS
