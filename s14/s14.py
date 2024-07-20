@@ -52,9 +52,14 @@ class Base(ABC):
                 return obj
         raise InvalidIdException(cls._invalid_id_message)
 
+    @abstractmethod
+    def remove_related(self):
+        pass
+
     @classmethod
     def remove(cls,id):
         obj = cls.get(id)
+        obj.remove_related()
         cls._objects.remove(obj)
         return f"removed successfully {obj.id}"
     
@@ -115,6 +120,13 @@ class Movie(Base):
             return movies
         else:
             raise Exception("invalid type")
+    
+    def remove_related(self):
+        for cast in Cast._objects:
+            if self in cast.movies:
+                cast.movies.remove(self)
+    
+
 
 class Cast(Base):
     _invalid_id_message :str = "invalid cast id"
@@ -138,6 +150,12 @@ class Cast(Base):
     def __str__(self) -> str:
         m = ", ".join([str(x.id) for x in sorted(self.movies,key=lambda y:y.id)])
         return f'{{name:"{self.name}", movies:[{m}]}}'
+
+
+    def remove_related(self):
+        for movie in Movie._objects:
+            if self in movie.casts:
+                movie.casts.remove(self)
 
 
 def link_cast_to_movie(cast_id,movie_id):
