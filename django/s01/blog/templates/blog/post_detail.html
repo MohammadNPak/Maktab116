@@ -1,5 +1,5 @@
 {% extends "base.html" %} {% block content %}
-
+{% load static %}
 <a href="posts.html" class="btn">Back To Posts</a>
 <div class="post bg-white p-1 my-1">
   <div>
@@ -9,7 +9,7 @@
         src="{{post.author.picture.url}}"
         alt=""
       />
-      <h4>John Doe</h4>
+      <h4>{{post.author.username}}</h4>
     </a>
   </div>
   <div>
@@ -23,59 +23,63 @@
   <div class="post-form-header bg-primary">
     <h3>Leave A Comment</h3>
   </div>
-  <form class="form my-1">
+  
+  <form class="form my-1" method="post" action="{% url 'create_comment' content_type='post' object_id=post.id %}">
+    {% csrf_token %}
     <textarea
-      name="text"
+
       cols="30"
       rows="5"
       placeholder="Comment on this post"
+      name="body"
     ></textarea>
     <input type="submit" class="btn btn-dark my-1" value="Submit" />
   </form>
+
 </div>
 
 <div class="posts">
-  <div class="post bg-white p-1 my-1">
-    <div>
-      <a href="profile.html">
-        <img
-          class="round-img"
-          src="https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50?s=200"
-          alt=""
-        />
-        <h4>John Doe</h4>
-      </a>
-    </div>
-    <div>
-      <p class="my-1">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Sint possimus
-        corporis sunt necessitatibus! Minus nesciunt soluta suscipit nobis. Amet
-        accusamus distinctio cupiditate blanditiis dolor? Illo perferendis
-        eveniet cum cupiditate aliquam?
-      </p>
-    </div>
-  </div>
+  
+{% for comment in comments %}
 
-  <div class="post bg-white p-1 my-1">
-    <div>
-      <a href="profile.html">
-        <img
-          class="round-img"
-          src="https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50?s=200"
-          alt=""
-        />
-        <h4>John Doe</h4>
-      </a>
-    </div>
-    <div>
-      <p class="my-1">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Sint possimus
-        corporis sunt necessitatibus! Minus nesciunt soluta suscipit nobis. Amet
-        accusamus distinctio cupiditate blanditiis dolor? Illo perferendis
-        eveniet cum cupiditate aliquam?
-      </p>
-    </div>
+<div class="post bg-white p-1 my-1">
+  <div>
+    <a href="profile.html">
+      <img
+        class="round-img"
+        src="{{comment.author.picture.url}}"
+        alt=""
+      />
+      <h4>{{comment.author.username}}</h4>
+    </a>
+  </div>
+  <div>
+    <p class="my-1">
+      {{comment.body}}
+    </p>
+    <p>
+      <form action="{% url 'create_comment' content_type='comment' object_id=comment.id %}" method="post">
+        {% csrf_token %}
+        <textarea name="body" id="" >
+      </textarea>
+        {% comment %} <button onclick="replyCallback('comment','{{comment.id}}')">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-0.5 -0.5 24 24" id="Reply--Streamline-Outlined-Material-Symbols" height="24" width="24"><desc>Reply Streamline Icon: https://streamlinehq.com</desc><path fill="#000000" d="M18.6875 18.208333333333336v-3.7375000000000003c0 -0.9583333333333334 -0.31145833333333334 -1.7489583333333334 -0.9343750000000001 -2.371875 -0.6229166666666667 -0.6229166666666667 -1.4135416666666667 -0.9343750000000001 -2.371875 -0.9343750000000001H5.654166666666667l3.905208333333334 3.905208333333334 -1.0302083333333334 1.0302083333333334L2.875 10.445833333333335 8.529166666666667 4.791666666666667l1.0302083333333334 1.0302083333333334 -3.905208333333334 3.905208333333334h9.727083333333335c1.3576229166666667 0 2.4876895833333332 0.45123125000000003 3.3901041666666667 1.3536458333333334C19.67376875 11.98314375 20.125 13.113210416666668 20.125 14.470833333333333V18.208333333333336h-1.4375Z" stroke-width="1"></path></svg>
+        </button> {% endcomment %}
+        <input type="submit" value="replay">
+      </form>
+    </p>
   </div>
 </div>
 
+{% endfor %}
+
+</div>
+
+
+
 {% endblock content %}
+
+
+{% block js %}
+ <script src="{% static 'blog/new_comment.js' %}"></script>
+{% endblock js %}

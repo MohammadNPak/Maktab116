@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SPA with Fetch API</title>
+  <style>
+    .content {
+      margin: 20px;
+    }
+    .nav-link {
+      margin-right: 15px;
+      cursor: pointer;
+      color: blue;
+      text-decoration: underline;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>Single Page Application with Fetch API</h1>
+  <nav>
+    <span class="nav-link" data-page="home">Home</span>
+    <span class="nav-link" data-page="about">About</span>
+    <span class="nav-link" data-page="users">Users</span>
+  </nav>
+  <div class="content" id="content">
+    <h2>Welcome</h2>
+    <p>Select a page to view its content.</p>
+  </div>
+
+  <script>
+    // Handle Navigation
+    const contentDiv = document.getElementById('content');
+    const navLinks = document.querySelectorAll('.nav-link');
+
+    navLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        const page = link.dataset.page;
+        loadPage(page);
+      });
+    });
+
+    // Load Page Content
+    function loadPage(page) {
+        history.pushState({ page }, "", `/${page}`);
+        if (page === "home") {
+          contentDiv.innerHTML = "<h2>Home</h2><p>Welcome to the homepage!</p>";
+        } else if (page === "about") {
+          contentDiv.innerHTML = "<h2>About</h2><p>About this SPA.</p>";
+        } else if (page === "users") {
+          fetchUsers();
+        }
+      }
+      
+      // Handle back/forward navigation
+      window.onpopstate = (event) => {
+        const page = event.state ? event.state.page : "home";
+        loadPage(page);
+      };
+
+    // Fetch API Example
+    function fetchUsers() {
+      fetch('https://jsonplaceholder.typicode.com/users')
+        .then(response => response.json())
+        .then(users => {
+          contentDiv.innerHTML = '<h2>Users</h2>';
+          const userList = document.createElement('ul');
+          users.forEach(user => {
+            const listItem = document.createElement('li');
+            listItem.textContent = `${user.name} - ${user.email}`;
+            userList.appendChild(listItem);
+          });
+          contentDiv.appendChild(userList);
+        })
+        .catch(error => {
+          contentDiv.innerHTML = `<p>Error loading users: ${error.message}</p>`;
+        });
+    }
+
+    // Default to Home
+    loadPage('home');
+  </script>
+</body>
+</html>
