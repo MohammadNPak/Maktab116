@@ -8,7 +8,7 @@ User = get_user_model()
 class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model=Post
-        fields=["title","body","created_at"]
+        fields=["id","title","body","created_at"]
 
 
 class UserPostSerializer(serializers.ModelSerializer):

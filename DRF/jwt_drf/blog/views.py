@@ -8,7 +8,7 @@ from .serializers import PostSerializer
 from django.shortcuts import get_object_or_404
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.authentication import BasicAuthentication,TokenAuthentication
-from rest_framework.permissions import IsAuthenticated,IsAdminUser
+from rest_framework.permissions import IsAuthenticated,IsAdminUser,AllowAny
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from .permissions import IsOwner
 from django.contrib.auth import get_user_model
@@ -73,7 +73,7 @@ class PostDetailView(APIView):
 
 class PostModelViewset(ModelViewSet):
     # authentication_classes=[BasicAuthentication]
-    permission_classes=[IsAuthenticated]
+    permission_classes=[AllowAny]
     
     queryset = Post.objects.all()
     serializer_class=PostSerializer
