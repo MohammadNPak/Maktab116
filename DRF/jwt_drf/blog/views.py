@@ -14,6 +14,8 @@ from .permissions import IsOwner
 from django.contrib.auth import get_user_model
 from .serializers import UserPostSerializer,UserPostSerializer2,UserPostSerializer3
 
+from .tasks import test_task
+
 User = get_user_model()
 
 # class PostListView(APIView):
@@ -35,37 +37,38 @@ User = get_user_model()
 #                             status=status.HTTP_400_BAD_REQUEST)
 
 
-# class PostDetailView(APIView):
+class PostDetailView(APIView):
 
-#     http_method_names = ["get","delete", "put","patch"]
+    http_method_names = ["get","delete", "put","patch"]
 
-#     def get(self,request,pk):
-#         obj = get_object_or_404(Post,id=pk)
-#         serializer = PostSerializer(obj)
-#         return Response(data=serializer.data)
+    def get(self,request,pk):
+        obj = get_object_or_404(Post,id=pk)
+        test_task.delay(15)
+        serializer = PostSerializer(obj)
+        return Response(data=serializer.data)
     
-#     def put(self, request, pk):
-#         obj = get_object_or_404(Post, id=pk)
-#         serializer = PostSerializer(obj, request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(status=status.HTTP_200_OK, data=serializer.data)
-#         return Response(status=status.HTTP_400_BAD_REQUEST,
-#                         data={"message": "bad request"})
+    def put(self, request, pk):
+        obj = get_object_or_404(Post, id=pk)
+        serializer = PostSerializer(obj, request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(status=status.HTTP_200_OK, data=serializer.data)
+        return Response(status=status.HTTP_400_BAD_REQUEST,
+                        data={"message": "bad request"})
    
-#     def patch(self, request, pk):
-#         obj = get_object_or_404(Post, id=pk)
-#         serializer = PostSerializer(obj, request.data, partial=True)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(status=status.HTTP_200_OK, data=serializer.data)
-#         return Response(status=status.HTTP_400_BAD_REQUEST,
-#                         data={"message": "bad request"})
+    def patch(self, request, pk):
+        obj = get_object_or_404(Post, id=pk)
+        serializer = PostSerializer(obj, request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(status=status.HTTP_200_OK, data=serializer.data)
+        return Response(status=status.HTTP_400_BAD_REQUEST,
+                        data={"message": "bad request"})
 
-#     def delete(self, request, pk):
-#         obj = get_object_or_404(Post, id=pk)
-#         obj.delete()
-#         return Response(status=status.HTTP_200_OK)
+    def delete(self, request, pk):
+        obj = get_object_or_404(Post, id=pk)
+        obj.delete()
+        return Response(status=status.HTTP_200_OK)
 
 
 class PostModelViewset(ModelViewSet):

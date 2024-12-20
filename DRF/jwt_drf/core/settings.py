@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
-
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -81,12 +81,24 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.environ.get("POSTGRES_NAME"),
+        "USER": os.environ.get("POSTGRES_USER"),
+        "PASSWORD": os.environ.get("POSTGRES_PASSWORD"),
+        "HOST": "db",
+        "PORT": "5432",
     }
 }
+
 
 
 # Password validation
@@ -157,4 +169,32 @@ SPECTACULAR_SETTINGS = {
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
     # OTHER SETTINGS
+}
+
+
+
+CACHES = {
+        "default": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": "redis://redis:6379/",
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient"
+            },
+        }
+    }
+
+
+
+
+# CELERY_TIMEZONE = "Australia/Tasmania"
+# CELERY_TASK_TRACK_STARTED = True
+# CELERY_TASK_TIME_LIMIT = 30 * 60
+# CELERY_BROKER_URL="amqp://myuser:mypassword@localhost:5672/"  
+# CELERY_RESULT_BACKEND = "redis://myuser:@localhost:6379/0"
+# CELERY_IMPORTS = ()
+
+CELERY_CONFIG = {
+    "broker_url":"amqp://myuser:mypassword@rabbitmq:5672/",
+    "result_backend":'redis://redis:6379/0'
+        # "redis://myuser:@redis:6379/0",
 }
