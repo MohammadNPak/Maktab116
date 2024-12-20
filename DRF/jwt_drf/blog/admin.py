@@ -1,0 +1,12 @@
+from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from .models import Post,User
+
+@admin.register(Post)
+class PostModelAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(User)
+class UserModelAdmin(BaseUserAdmin):
+    pass
