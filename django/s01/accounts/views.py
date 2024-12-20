@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.contrib import messages
-from .forms import RegisterForm,UserUpdateForm
+from .forms import RegisterForm,UserUpdateForm,MyUserCreationForm
 from django.views.generic import CreateView,UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -57,7 +57,7 @@ def logout_view(request):
 
 
 class RegisterView(CreateView):
-    form_class=UserCreationForm
+    form_class=MyUserCreationForm
     model=User
     template_name="accounts/register.html"
     success_url="/accounts/login"

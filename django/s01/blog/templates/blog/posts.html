@@ -33,9 +33,16 @@
               <div>
                 <p class="my-1">{{ post.title }}</p>
                 <p class="my-1">{{ post.body }}</p>
-                <button class="btn">
-                  <i class="fas fa-thumbs-up"></i> <span>4</span>
-                </button>
+
+
+                <form action="{% url "like_post" pk=post.pk %}" method="post">
+                  {% csrf_token %}
+                  <input class="btn" type="submit">
+                    <i class="fas fa-thumbs-up"></i> <span>{{ post.like.count}}</span>
+                </input>
+                </form>
+
+
                 <button class="btn">
                   <i class="fas fa-thumbs-down"></i>
                 </button>

@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import ValidationError
 from .models import User
-
+from django.contrib.auth.forms import UserCreationForm
 
 class RegisterForm(forms.Form):
     username = forms.CharField(max_length=40)
@@ -38,3 +38,8 @@ class UserUpdateForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ("picture",)
+
+class MyUserCreationForm(UserCreationForm):
+    class Meta:
+        model=User
+        fields = ('username','password1','password2')

@@ -4,6 +4,13 @@
     </h1>
     <ul>
         <li>
+            <form action="{% url "search_results" %}" method="get">
+                <input type="text" name="search_query" id="" value="{{search_query}}">
+                <button type="submit">search</button>
+            </form>
+        </li>
+
+        <li>
             <a href="profiles.html">Developers</a>
         </li>
         <li>
@@ -16,10 +23,11 @@
         </li>
         <li>
             {% comment %} <a href="{% url "logout" %}"> {% endcomment %}
-                <i class="fas fa-sign-out-alt"></i>
                 <form action="{% url "logout" %}" method="post">
                     {% csrf_token %}
-                    <button type="submit">Logout</button>
+                    <button type="submit">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
                 </form>
                 {% comment %} <span class="hide-sm">Logout</span></a> {% endcomment %}
         </li>
